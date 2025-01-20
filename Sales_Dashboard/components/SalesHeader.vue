@@ -50,7 +50,7 @@
 <script setup>
 import { Plus, Filter } from "lucide-vue-next";
 import CreateSalePopUp from "../components/PopUp/CreateSalePopUp.vue";
-import DateFilterPopup from "../components/PopUp/DateFilterPopup.vue";
+import DateFilterPopup from "../components/PopUp/DateFilterPopUp.vue";
 import GenerateReport from "../components/PopUp/GenerateReport.vue";
 import { ref, computed } from "vue";
 import { useSales } from "#imports";
