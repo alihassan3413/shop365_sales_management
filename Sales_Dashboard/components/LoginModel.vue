@@ -80,7 +80,7 @@
 
 <script setup>
 import { UserRound, Lock } from "lucide-vue-next";
-import { reactive } from "vue";
+import { reactive, onMounted } from "vue";
 import { useAuthStore } from "~/store/useAuthStore";
 
 const form = reactive({
@@ -96,4 +96,8 @@ const handleSubmit = async () => {
     console.log("Login successful");
   }
 };
+
+onMounted(() => {
+  console.log("DATABASE_URL:", process.env.DATABASE_URL);
+});
 </script>

@@ -1,4 +1,7 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
+import dotenv from "dotenv";
+dotenv.config();
+
 export default defineNuxtConfig({
   app: {
     baseURL: "/sales-dashboard/",
