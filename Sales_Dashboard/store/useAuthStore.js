@@ -3,53 +3,43 @@ import { useRouter } from "vue-router";
 
 export const useAuthStore = defineStore("auth", () => {
   const router = useRouter();
+  const http = useHttp(); // Assuming you have the HTTP composable
 
-  // Cookie options with proper SameSite configuration
   const cookieOptions = {
-    maxAge: 60 * 60 * 24 * 7, // 7 days
-    secure: true, // Ensure cookie is only sent over HTTPS
-    sameSite: "strict", // Strict same-site policy
+    maxAge: 60 * 60 * 24 * 7,
+    secure: true,
+    sameSite: "strict",
   };
 
-  // Initialize reactive refs for auth state
   const token = ref(null);
   const user = ref(null);
   const globalError = ref(null);
   const isLoading = ref(false);
   const errors = ref({});
 
-  // Initialize auth state from cookies
   const initAuth = () => {
     const authToken = useCookie("auth-token", cookieOptions);
     const userCookie = useCookie("auth-user", cookieOptions);
 
-    if (authToken.value) {
-      token.value = authToken.value;
-    }
+    token.value = authToken.value || null;
 
-    if (userCookie.value) {
-      try {
-        user.value =
-          typeof userCookie.value === "string"
-            ? JSON.parse(userCookie.value)
-            : userCookie.value;
-      } catch (e) {
-        console.error("Error parsing user cookie:", e);
-        clearAuth();
-      }
+    try {
+      user.value = userCookie.value ? JSON.parse(userCookie.value) : null;
+    } catch (error) {
+      console.error("Error parsing user cookie:", error);
+      user.value = null;
+      // Optional: Clear the invalid cookie
+      const userCookieObj = useCookie("auth-user", cookieOptions);
+      userCookieObj.value = null;
     }
   };
 
-  // Clear all auth state and cookies
   const clearAuth = () => {
     const authToken = useCookie("auth-token", cookieOptions);
     const userCookie = useCookie("auth-user", cookieOptions);
 
-    // Clear cookies
     authToken.value = null;
     userCookie.value = null;
-
-    // Clear reactive state
     token.value = null;
     user.value = null;
   };
@@ -64,8 +54,6 @@ export const useAuthStore = defineStore("auth", () => {
 
     if (!credentials.password) {
       validationErrors.password = "Password is required";
-    } else if (credentials.password.length < 4) {
-      validationErrors.password = "Password must be at least 4 characters";
     }
 
     return {
@@ -86,22 +74,17 @@ export const useAuthStore = defineStore("auth", () => {
         return false;
       }
 
-      const { data } = await useFetch("/api/auth/login", {
-        method: "POST",
-        body: credentials,
-      });
+      const response = await http.post("/login", credentials);
 
-      if (data.value) {
-        // Set cookies with proper options
+      if (response.token) {
         const authToken = useCookie("auth-token", cookieOptions);
         const userCookie = useCookie("auth-user", cookieOptions);
 
-        authToken.value = data.value.token;
-        userCookie.value = JSON.stringify(data.value.user);
+        authToken.value = response.token;
+        userCookie.value = JSON.stringify(response.user);
 
-        // Update reactive state
-        token.value = data.value.token;
-        user.value = data.value.user;
+        token.value = response.token;
+        user.value = response.user;
 
         await router.push("/dashboard");
         return true;
@@ -110,9 +93,7 @@ export const useAuthStore = defineStore("auth", () => {
       globalError.value = "Login failed";
       return false;
     } catch (error) {
-      if (error.data?.errors) {
-        errors.value = error.data.errors;
-      }
+      errors.value = error.errors || {};
       globalError.value = error.message || "An error occurred";
       return false;
     } finally {
@@ -120,16 +101,22 @@ export const useAuthStore = defineStore("auth", () => {
     }
   };
 
-  const logout = () => {
-    clearAuth();
-    router.push("/login");
+  const logout = async () => {
+    try {
+      await http.post("/logout");
+      clearAuth();
+      router.push("/login");
+    } catch (error) {
+      console.error("Logout error:", error);
+      clearAuth();
+      router.push("/login");
+    }
   };
 
   const isAuthenticated = computed(() => {
     return !!token.value && !!user.value;
   });
 
-  // Initialize auth state when store is created
   initAuth();
 
   return {

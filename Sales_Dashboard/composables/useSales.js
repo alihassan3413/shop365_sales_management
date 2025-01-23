@@ -22,7 +22,7 @@ export const useSales = () => {
       if (end_date) queryParams.append("end_date", end_date);
 
       const queryString = queryParams.toString();
-      const url = `/sales/sales${queryString ? `?${queryString}` : ""}`;
+      const url = `/sales${queryString ? `?${queryString}` : ""}`;
 
       const response = await http.get(url);
 
@@ -71,7 +71,7 @@ export const useSales = () => {
       saleValidation.parse(formDataToValidate);
 
       // Submit to API
-      const response = await http.post("/sales/sales", formDataToValidate);
+      const response = await http.post("/sales", formDataToValidate);
       sales.value.push(response.data);
 
       return response.data;
@@ -94,7 +94,7 @@ export const useSales = () => {
     }
   };
 
-  const updateSale = async (formData) => {
+  const updateSale = async (formData, id) => {
     isLoading.value = true;
     clearErrors();
 
@@ -129,10 +129,7 @@ export const useSales = () => {
       saleValidation.parse(formDataToValidate);
 
       // Submit to API
-      const response = await http.post(
-        `/sales/sales-update`,
-        formDataToValidate
-      );
+      const response = await http.put(`/sales/${id}`, formDataToValidate);
 
       const saleIndex = sales.value.findIndex(
         (sale) => sale.id === formData.id

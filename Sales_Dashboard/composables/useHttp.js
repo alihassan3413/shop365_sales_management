@@ -7,7 +7,8 @@ export const useHttp = () => {
   const request = async (endpoint, options = {}) => {
     isLoading.value = true;
     error.value = null;
-    const baseURL = "/api";
+    const config = useRuntimeConfig();
+    const baseURL = config.public.apiBaseUrl;
 
     const tokenState = useState("token");
     const defaultOptions = {

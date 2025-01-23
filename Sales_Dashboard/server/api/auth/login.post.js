@@ -27,6 +27,8 @@ export default defineEventHandler(async (event) => {
       },
     });
 
+
+
     if (!user) return { status: 404, message: "User not found" };
 
     const isPasswordCorrect = await bcrypt.compare(password, user.password);

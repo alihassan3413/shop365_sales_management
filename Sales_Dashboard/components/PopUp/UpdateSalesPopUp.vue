@@ -256,7 +256,7 @@ const handleSubmit = async () => {
       difference: computedDifference.value,
     };
 
-    const updatedSale = await updateSale(dataToUpdate);
+    const updatedSale = await updateSale(dataToUpdate, props.saleData.id);
     emit("saleUpdated", updatedSale);
     emit("update:isOpen", false);
   } catch (err) {

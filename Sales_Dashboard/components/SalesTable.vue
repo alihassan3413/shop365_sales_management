@@ -45,7 +45,7 @@
               <td
                 class="py-4 px-4 text-sm text-gray-600 border-y first:border-l last:border-r border-gray-200"
               >
-                {{ formatDate(sale.createdAt) }}
+                {{ formatDate(sale.created_at) }}
               </td>
               <td
                 class="py-4 px-4 text-sm text-gray-600 border-y border-gray-200"
@@ -297,7 +297,7 @@ const openEditModal = (sale) => {
     paidBillsDetails: sale.paid_bills_details,
     pendingPayments: sale.pending_payments || "",
     pendingPaymentsDetails: sale.pending_payments_details || "",
-    date: formatDate(sale.createdAt),
+    date: formatDate(sale.created_at),
     difference: sale.difference,
     id: sale.id,
   };

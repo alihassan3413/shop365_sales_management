@@ -17,12 +17,9 @@ export default defineNuxtConfig({
     },
   },
 
-  // Add runtime config for environment variables
   runtimeConfig: {
-    databaseUrl: process.env.DATABASE_URL,
-    // Public runtime config
     public: {
-      apiBase: "/sales-dashboard/api",
+      apiBaseUrl: process.env.NUXT_PUBLIC_API_BASE_URL,
     },
   },
 
