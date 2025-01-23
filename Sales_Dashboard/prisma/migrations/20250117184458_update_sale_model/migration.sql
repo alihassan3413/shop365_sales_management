@@ -1,5 +1,5 @@
 -- CreateTable
-CREATE TABLE "Sale" (
+CREATE TABLE "sale" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     "total_sale" TEXT NOT NULL,
     "bank_sale" TEXT,
