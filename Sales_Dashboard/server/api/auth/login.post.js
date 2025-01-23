@@ -1,6 +1,6 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import db from "../../utils/db";
+import db from "./../../utils/db";
 import { validateLogin } from "~/server/validators/auth";
 
 export default defineEventHandler(async (event) => {
