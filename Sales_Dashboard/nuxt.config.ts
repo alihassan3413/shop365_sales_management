@@ -4,9 +4,9 @@ dotenv.config();
 
 export default defineNuxtConfig({
   ssr: false,
-  app: {
-    baseURL: "/sales-dashboard/",
-  },
+
+  port: process.env.port,
+  host: process.env.host,
   devtools: { enabled: true },
   css: ["~/assets/css/main.css"],
   plugins: ["~/plugins/pinia.js"],

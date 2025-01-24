@@ -69,7 +69,7 @@ export const useAuthStore = defineStore("auth", () => {
         token.value = response.token;
         user.value = response.user;
 
-        await router.push("/dashboard");
+        await router.push("dashboard");
         return true;
       }
 
