@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 dotenv.config();
 
 export default defineNuxtConfig({
+  ssr: false,
   app: {
     baseURL: "/sales-dashboard/",
   },
@@ -19,7 +20,7 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     public: {
-      apiBaseUrl: process.env.NUXT_PUBLIC_API_BASE_URL,
+      apiBaseUrl: process.env.NUXT_PUBLIC_API_BASE_URL || "",
     },
   },
 

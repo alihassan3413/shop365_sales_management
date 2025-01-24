@@ -5,41 +5,27 @@ export const useAuthStore = defineStore("auth", () => {
   const router = useRouter();
   const http = useHttp(); // Assuming you have the HTTP composable
 
-  const cookieOptions = {
-    maxAge: 60 * 60 * 24 * 7,
-    secure: true,
-    sameSite: "strict",
-  };
-
-  const token = ref(null);
-  const user = ref(null);
+  const token = ref(localStorage.getItem("auth-token") || null);
+  const user = ref(JSON.parse(localStorage.getItem("auth-user")) || null);
   const globalError = ref(null);
   const isLoading = ref(false);
   const errors = ref({});
 
   const initAuth = () => {
-    const authToken = useCookie("auth-token", cookieOptions);
-    const userCookie = useCookie("auth-user", cookieOptions);
-
-    token.value = authToken.value || null;
+    token.value = localStorage.getItem("auth-token") || null;
 
     try {
-      user.value = userCookie.value ? JSON.parse(userCookie.value) : null;
+      user.value = JSON.parse(localStorage.getItem("auth-user")) || null;
     } catch (error) {
-      console.error("Error parsing user cookie:", error);
+      console.error("Error parsing user data from localStorage:", error);
       user.value = null;
-      // Optional: Clear the invalid cookie
-      const userCookieObj = useCookie("auth-user", cookieOptions);
-      userCookieObj.value = null;
+      localStorage.removeItem("auth-user"); // Optionally clear corrupted data
     }
   };
 
   const clearAuth = () => {
-    const authToken = useCookie("auth-token", cookieOptions);
-    const userCookie = useCookie("auth-user", cookieOptions);
-
-    authToken.value = null;
-    userCookie.value = null;
+    localStorage.removeItem("auth-token");
+    localStorage.removeItem("auth-user");
     token.value = null;
     user.value = null;
   };
@@ -77,11 +63,8 @@ export const useAuthStore = defineStore("auth", () => {
       const response = await http.post("/login", credentials);
 
       if (response.token) {
-        const authToken = useCookie("auth-token", cookieOptions);
-        const userCookie = useCookie("auth-user", cookieOptions);
-
-        authToken.value = response.token;
-        userCookie.value = JSON.stringify(response.user);
+        localStorage.setItem("auth-token", response.token);
+        localStorage.setItem("auth-user", JSON.stringify(response.user));
 
         token.value = response.token;
         user.value = response.user;
